@@ -6,8 +6,8 @@
 #ifndef __PARSER_H__
 #define __PARSER_H__
 
-#include <string>
 #include "lexer.h"
+#include <string>
 
 class Parser {
   public:
@@ -20,4 +20,3 @@ class Parser {
 };
 
 #endif
-

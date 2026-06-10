@@ -7,14 +7,13 @@
  * of this file online
  *
  */
-#include <iostream>
-#include <cstdlib>
 #include "parser.h"
+#include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
-void Parser::syntax_error()
-{
+void Parser::syntax_error() {
     cout << "SYNTAX ERROR !!!!!&%!!\n";
     exit(1);
 }
@@ -25,8 +24,7 @@ void Parser::syntax_error()
 // this function is particularly useful to match
 // terminals in a right hand side of a rule.
 // Written by Mohsen Zohrevandi
-Token Parser::expect(TokenType expected_type)
-{
+Token Parser::expect(TokenType expected_type) {
     Token t = lexer.GetToken();
     if (t.token_type != expected_type)
         syntax_error();
@@ -34,19 +32,16 @@ Token Parser::expect(TokenType expected_type)
 }
 
 // Parsing
-
 // This function is simply to illustrate the GetToken() function
 // you will not need it for your project and you can delete it
 // the function also illustrates the use of peek()
-void Parser::ConsumeAllInput()
-{
+void Parser::ConsumeAllInput() {
     Token token;
     int i = 1;
 
     token = lexer.peek(i);
     token.Print();
-    while (token.token_type != END_OF_FILE)
-    {
+    while (token.token_type != END_OF_FILE) {
         i = i + 1;
         token = lexer.peek(i);
         token.Print();
@@ -54,20 +49,21 @@ void Parser::ConsumeAllInput()
 
     token = lexer.GetToken();
     token.Print();
-    while (token.token_type != END_OF_FILE)
-    {
+    while (token.token_type != END_OF_FILE) {
         token = lexer.GetToken();
         token.Print();
     }
 }
 
-int main()
-{
-    // note: the parser class has a lexer object instantiated in it. You should not be declaring
-    // a separate lexer object. You can access the lexer object in the parser functions as shown in the
-    // example method Parser::ConsumeAllInput
-    // If you declare another lexer object, lexical analysis will not work correctly
+int main() {
+    // note: the parser class has a lexer object instantiated in it. You should
+    // not be declaring a separate lexer object. You can access the lexer object
+    // in the parser functions as shown in the example method
+    // Parser::ConsumeAllInput If you declare another lexer object, lexical
+    // analysis will not work correctly
     Parser parser;
+
+    cout << "Parser created" << endl;
 
     parser.ConsumeAllInput();
 }

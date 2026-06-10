@@ -11,7 +11,7 @@
 
 class InputBuffer {
   public:
-    void GetChar(char&);
+    void GetChar(char &);
     char UngetChar(char);
     std::string UngetString(std::string);
     bool EndOfInput();
@@ -20,4 +20,4 @@ class InputBuffer {
     std::vector<char> input_buffer;
 };
 
-#endif  //__INPUT_BUFFER__H__
+#endif //__INPUT_BUFFER__H__

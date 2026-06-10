@@ -24,6 +24,14 @@ Runs the provided test cases in `provided_tests/`.
 make clean
 ```
 
+## Format
+
+```bash
+make format
+```
+
+Formats `parser.cc` and `parser.h` with clang-format (requires `brew install clang-format`).
+
 ## Source
 
 - `provided_code/parser.cc` — main file to implement

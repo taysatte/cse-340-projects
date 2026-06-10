@@ -71,7 +71,8 @@ output/
 .cache/
 
 # vscode
-.vscode/
+.vscode/*
+!.vscode/settings.json
 
 # MacOS
 .DS_Store

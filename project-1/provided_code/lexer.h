@@ -6,19 +6,33 @@
 #ifndef __LEXER__H__
 #define __LEXER__H__
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "inputbuf.h"
 
 // ------- token types -------------------
 
-typedef enum { END_OF_FILE = 0,
-    POLY, INPUT, TASKS, EXECUTE, OUTPUT, INPUTS, 
-    EQUAL, LPAREN,
-    RPAREN, ID, COMMA, POWER, NUM,
-    PLUS, MINUS, SEMICOLON, ERROR,
-    } TokenType;
+typedef enum {
+    END_OF_FILE = 0,
+    POLY,
+    INPUT,
+    TASKS,
+    EXECUTE,
+    OUTPUT,
+    INPUTS,
+    EQUAL,
+    LPAREN,
+    RPAREN,
+    ID,
+    COMMA,
+    POWER,
+    NUM,
+    PLUS,
+    MINUS,
+    SEMICOLON,
+    ERROR,
+} TokenType;
 
 class Token {
   public:
@@ -50,4 +64,4 @@ class LexicalAnalyzer {
     Token ScanIdOrKeyword();
 };
 
-#endif  //__LEXER__H__
+#endif //__LEXER__H__
