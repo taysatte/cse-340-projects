@@ -49,6 +49,7 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
+!project-*/Makefile
 install_manifest.txt
 compile_commands.json
 
@@ -66,6 +67,7 @@ vcpkg_installed/
 
 # test output & cache
 Testing/
+output/
 .cache/
 
 # vscode
