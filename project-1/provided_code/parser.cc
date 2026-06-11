@@ -31,29 +31,25 @@ Token Parser::expect(TokenType expected_type) {
     return t;
 }
 
-// Parsing
-// This function is simply to illustrate the GetToken() function
-// you will not need it for your project and you can delete it
-// the function also illustrates the use of peek()
-void Parser::ConsumeAllInput() {
-    Token token;
-    int i = 1;
-
-    token = lexer.peek(i);
-    token.Print();
-    while (token.token_type != END_OF_FILE) {
-        i = i + 1;
-        token = lexer.peek(i);
-        token.Print();
-    }
-
-    token = lexer.GetToken();
-    token.Print();
-    while (token.token_type != END_OF_FILE) {
-        token = lexer.GetToken();
-        token.Print();
-    }
+void Parser::parse_input() {
+    parse_program();
+    expect(END_OF_FILE);
 }
+
+void Parser::parse_program() {
+    parse_tasks();
+    parse_poly();
+    parse_execute();
+    parse_inputs();
+}
+
+void Parser::parse_tasks() { cout << "parse_tasks" << endl; }
+
+void Parser::parse_poly() { cout << "parse_poly" << endl; }
+
+void Parser::parse_execute() { cout << "parse_execute" << endl; }
+
+void Parser::parse_inputs() { cout << "parse_inputs" << endl; }
 
 int main() {
     // note: the parser class has a lexer object instantiated in it. You should
@@ -65,5 +61,5 @@ int main() {
 
     cout << "Parser created" << endl;
 
-    parser.ConsumeAllInput();
+    parser.parse_input();
 }

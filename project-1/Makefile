@@ -1,5 +1,6 @@
 CXX      = g++
 CXXFLAGS = -std=c++11 -Wall
+DEBUG_FLAGS = -g -O0
 SRC_DIR  = provided_code
 SRCS     = $(SRC_DIR)/parser.cc \
            $(SRC_DIR)/lexer.cc \
@@ -8,12 +9,16 @@ TARGET       = a.out
 FORMAT_SRCS  = $(SRC_DIR)/parser.cc $(SRC_DIR)/parser.h
 CLANG_FORMAT ?= clang-format
 
-.PHONY: all clean test format
+.PHONY: all clean test format debug
 
 all: $(TARGET)
 
 $(TARGET): $(SRCS)
 	$(CXX) $(CXXFLAGS) -o $@ $(SRCS)
+
+debug: CXXFLAGS += $(DEBUG_FLAGS)
+debug:
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
 
 clean:
 	rm -f $(TARGET)

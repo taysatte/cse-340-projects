@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "project1TestFile",
+      "type": "pickString",
+      "description": "Test input file for project-1",
+      "options": [
+        "provided_tests/Task_2/t1.txt",
+        "provided_tests/Task_3/t1.txt",
+        "provided_tests/Task_4/t1.txt",
+        "provided_tests/Task_5/t1.txt",
+        "provided_tests/Syntax_Error/t1.txt",
+        "provided_tests/Error_Code_1/t1.txt"
+      ],
+      "default": "provided_tests/Task_2/t1.txt"
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Debug project-1",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/project-1/a.out",
+      "cwd": "${workspaceFolder}/project-1",
+      "preLaunchTask": "build project-1 (debug)",
+      "stdio": ["provided_tests/Task_2/t1.txt", null, null]
+    },
+    {
+      "name": "Debug project-1 (pick test file)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/project-1/a.out",
+      "cwd": "${workspaceFolder}/project-1",
+      "preLaunchTask": "build project-1 (debug)",
+      "stdio": ["${input:project1TestFile}", null, null]
+    }
+  ]
+}

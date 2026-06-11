@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build project-1",
+      "type": "shell",
+      "command": "make",
+      "options": {
+        "cwd": "${workspaceFolder}/project-1"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "build project-1 (debug)",
+      "type": "shell",
+      "command": "make debug",
+      "options": {
+        "cwd": "${workspaceFolder}/project-1"
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}

@@ -12,6 +12,12 @@
 class Parser {
   public:
     void ConsumeAllInput();
+    void parse_input();
+    void parse_program();
+    void parse_tasks();
+    void parse_poly();
+    void parse_execute();
+    void parse_inputs();
 
   private:
     LexicalAnalyzer lexer;
