@@ -8,6 +8,7 @@
  *
  */
 #include "parser.h"
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 
@@ -31,10 +32,88 @@ Token Parser::expect(TokenType expected_type) {
     return t;
 }
 
+bool Parser::is_declared_poly(const string &name) {
+    for (const PolyDecl &decl : poly_table) {
+        if (decl.header.name.lexeme == name)
+            return true;
+    }
+    return false;
+}
+
+int Parser::poly_param_count(const string &name) {
+    for (const PolyDecl &decl : poly_table) {
+        if (decl.header.name.lexeme == name)
+            return decl.param_count;
+    }
+    return -1;
+}
+
+bool Parser::is_valid_poly_param(const string &lexeme) {
+    for (const string &param : current_poly_params) {
+        if (param == lexeme)
+            return true;
+    }
+    return false;
+}
+
+void Parser::record_error(int code, int line_no) {
+    switch (code) {
+    case 1:
+        semantic_error_1.push_back(line_no);
+        break;
+    case 2:
+        semantic_error_2.push_back(line_no);
+        break;
+    case 3:
+        semantic_error_3.push_back(line_no);
+        break;
+    case 4:
+        semantic_error_4.push_back(line_no);
+        break;
+    }
+}
+
+void Parser::report_semantic_errors() {
+    sort(semantic_error_1.begin(), semantic_error_1.end());
+    sort(semantic_error_2.begin(), semantic_error_2.end());
+    sort(semantic_error_3.begin(), semantic_error_3.end());
+    sort(semantic_error_4.begin(), semantic_error_4.end());
+
+    if (!semantic_error_1.empty()) {
+        cout << "Semantic Error Code 1:";
+        for (int line : semantic_error_1)
+            cout << " " << line;
+        cout << "\n";
+        exit(1);
+    }
+    if (!semantic_error_2.empty()) {
+        cout << "Semantic Error Code 2:";
+        for (int line : semantic_error_2)
+            cout << " " << line;
+        cout << "\n";
+        exit(1);
+    }
+    if (!semantic_error_3.empty()) {
+        cout << "Semantic Error Code 3:";
+        for (int line : semantic_error_3)
+            cout << " " << line;
+        cout << "\n";
+        exit(1);
+    }
+    if (!semantic_error_4.empty()) {
+        cout << "Semantic Error Code 4:";
+        for (int line : semantic_error_4)
+            cout << " " << line;
+        cout << "\n";
+        exit(1);
+    }
+}
+
 void Parser::parse_input() {
     // input -> program END_OF_FILE
     parse_program();
     expect(END_OF_FILE);
+    report_semantic_errors();
 }
 
 void Parser::parse_program() {
@@ -77,38 +156,59 @@ void Parser::parse_poly_decl_list() {
 
 void Parser::parse_poly_decl() {
     // poly_decl -> poly_header EQUAL poly_body SEMICOLON
-    parse_poly_header();
+    PolyHeader header = parse_poly_header();
+
+    if (is_declared_poly(header.name.lexeme))
+        record_error(1, header.name.line_no);
+
+    PolyDecl decl;
+    decl.header = header;
+    decl.param_count = header.params.size();
+    poly_table.push_back(decl);
+
+    current_poly_params = header.params;
+
     expect(EQUAL);
     parse_poly_body();
     expect(SEMICOLON);
+
+    current_poly_params.clear();
 }
 
-void Parser::parse_poly_header() {
+PolyHeader Parser::parse_poly_header() {
     // poly_header -> poly_name
     // poly_header -> poly_name LPAREN id_list RPAREN
-    parse_poly_name();
+    PolyHeader header;
+    header.name = parse_poly_name();
     Token t = lexer.peek(1);
     if (t.token_type == LPAREN) {
         expect(LPAREN);
-        parse_id_list();
+        header.params = parse_id_list();
         expect(RPAREN);
+    } else {
+        header.params.push_back("x");
     }
+    return header;
 }
 
-void Parser::parse_poly_name() {
+Token Parser::parse_poly_name() {
     // poly_name -> ID
-    expect(ID);
+    return expect(ID);
 }
 
-void Parser::parse_id_list() {
+vector<string> Parser::parse_id_list() {
     // id_list -> ID
     // id_list -> ID COMMA id_list
-    expect(ID);
+    Token id = expect(ID);
+    vector<string> ids;
+    ids.push_back(id.lexeme);
     Token t = lexer.peek(1);
     if (t.token_type == COMMA) {
         expect(COMMA);
-        parse_id_list();
+        vector<string> rest = parse_id_list();
+        ids.insert(ids.end(), rest.begin(), rest.end());
     }
+    return ids;
 }
 
 void Parser::parse_poly_body() {
@@ -174,7 +274,9 @@ void Parser::parse_primary() {
     // primary -> LPAREN term_list RPAREN
     Token t = lexer.peek(1);
     if (t.token_type == ID) {
-        expect(ID);
+        Token id = expect(ID);
+        if (!current_poly_params.empty() && !is_valid_poly_param(id.lexeme))
+            record_error(2, id.line_no);
     } else if (t.token_type == LPAREN) {
         expect(LPAREN);
         parse_term_list();
@@ -261,21 +363,33 @@ void Parser::parse_assign_statement() {
 
 void Parser::parse_poly_evaluation() {
     // poly_evaluation -> poly_name LPAREN argument_list RPAREN
-    parse_poly_name();
+    Token name = parse_poly_name();
+
+    if (!is_declared_poly(name.lexeme))
+        record_error(3, name.line_no);
+
     expect(LPAREN);
-    parse_argument_list();
+    int arg_count = parse_argument_list();
     expect(RPAREN);
+
+    if (is_declared_poly(name.lexeme)) {
+        int expected_count = poly_param_count(name.lexeme);
+        if (arg_count != expected_count)
+            record_error(4, name.line_no);
+    }
 }
 
-void Parser::parse_argument_list() {
+int Parser::parse_argument_list() {
     // argument_list -> argument
     // argument_list -> argument COMMA argument_list
     parse_argument();
+    int count = 1;
     Token t = lexer.peek(1);
     if (t.token_type == COMMA) {
         expect(COMMA);
-        parse_argument_list();
+        count += parse_argument_list();
     }
+    return count;
 }
 
 void Parser::parse_argument() {

@@ -8,6 +8,17 @@
 
 #include "lexer.h"
 #include <string>
+#include <vector>
+
+struct PolyHeader {
+    Token name;
+    std::vector<std::string> params;
+};
+
+struct PolyDecl {
+    PolyHeader header;
+    int param_count;
+};
 
 class Parser {
   public:
@@ -18,15 +29,28 @@ class Parser {
     void syntax_error();
     Token expect(TokenType expected_type);
 
+    std::vector<PolyDecl> poly_table;
+    std::vector<int> semantic_error_1;
+    std::vector<int> semantic_error_2;
+    std::vector<int> semantic_error_3;
+    std::vector<int> semantic_error_4;
+    std::vector<std::string> current_poly_params;
+
+    bool is_declared_poly(const std::string &name);
+    int poly_param_count(const std::string &name);
+    bool is_valid_poly_param(const std::string &lexeme);
+    void record_error(int code, int line_no);
+    void report_semantic_errors();
+
     void parse_program();
     void parse_tasks_section();
     void parse_num_list();
     void parse_poly_section();
     void parse_poly_decl_list();
     void parse_poly_decl();
-    void parse_poly_header();
-    void parse_poly_name();
-    void parse_id_list();
+    PolyHeader parse_poly_header();
+    Token parse_poly_name();
+    std::vector<std::string> parse_id_list();
     void parse_poly_body();
     void parse_term_list();
     void parse_term();
@@ -43,7 +67,7 @@ class Parser {
     void parse_output_statement();
     void parse_assign_statement();
     void parse_poly_evaluation();
-    void parse_argument_list();
+    int parse_argument_list();
     void parse_argument();
     void parse_inputs_section();
 };
