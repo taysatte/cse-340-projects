@@ -508,15 +508,16 @@ void Parser::parse_input_num_list() {
         parse_input_num_list();
 }
 
-int Parser::ipow(int base, int exp) {
-    int result = 1;
+long long Parser::ipow(long long base, int exp) {
+    long long result = 1;
     for (int i = 0; i < exp; i++)
         result *= base;
     return result;
 }
 
-int Parser::eval_monomial(const Monomial &m, const vector<int> &arg_values) {
-    int val;
+long long Parser::eval_monomial(const Monomial &m,
+                                const vector<long long> &arg_values) {
+    long long val;
     if (m.primary_kind == PRIMARY_VAR)
         val = arg_values[m.var_index];
     else
@@ -524,20 +525,22 @@ int Parser::eval_monomial(const Monomial &m, const vector<int> &arg_values) {
     return ipow(val, m.exponent);
 }
 
-int Parser::eval_term(const Term &term, const vector<int> &arg_values) {
-    int coeff = term.has_coefficient ? term.coefficient : 1;
+long long Parser::eval_term(const Term &term,
+                            const vector<long long> &arg_values) {
+    long long coeff = term.has_coefficient ? term.coefficient : 1;
     if (term.monomials.empty())
         return coeff;
-    int product = 1;
+    long long product = 1;
     for (const Monomial &m : term.monomials)
         product *= eval_monomial(m, arg_values);
     return coeff * product;
 }
 
-int Parser::eval_term_list(const TermList &tl, const vector<int> &arg_values) {
-    int result = eval_term(tl.terms[0], arg_values);
+long long Parser::eval_term_list(const TermList &tl,
+                                 const vector<long long> &arg_values) {
+    long long result = eval_term(tl.terms[0], arg_values);
     for (size_t i = 0; i < tl.ops.size(); i++) {
-        int val = eval_term(tl.terms[i + 1], arg_values);
+        long long val = eval_term(tl.terms[i + 1], arg_values);
         if (tl.ops[i] == PLUS)
             result += val;
         else
@@ -546,12 +549,13 @@ int Parser::eval_term_list(const TermList &tl, const vector<int> &arg_values) {
     return result;
 }
 
-int Parser::eval_poly_body(const TermList &body,
-                           const vector<int> &arg_values) {
+long long Parser::eval_poly_body(const TermList &body,
+                                 const vector<long long> &arg_values) {
     return eval_term_list(body, arg_values);
 }
 
-int Parser::eval_arg(const PolyEvalArg &arg, const vector<int> &mem_vals) {
+long long Parser::eval_arg(const PolyEvalArg &arg,
+                           const vector<long long> &mem_vals) {
     if (arg.kind == ARG_NUM)
         return arg.num_value;
     if (arg.kind == ARG_ID)
@@ -559,8 +563,9 @@ int Parser::eval_arg(const PolyEvalArg &arg, const vector<int> &mem_vals) {
     return eval_poly_eval(arg.nested, mem_vals);
 }
 
-int Parser::eval_poly_eval(PolyEval *pe, const vector<int> &mem_vals) {
-    vector<int> arg_values;
+long long Parser::eval_poly_eval(PolyEval *pe,
+                                 const vector<long long> &mem_vals) {
+    vector<long long> arg_values;
     for (const PolyEvalArg &arg : pe->args)
         arg_values.push_back(eval_arg(arg, mem_vals));
     return eval_poly_body(poly_table[pe->poly_index].body, arg_values);
@@ -578,7 +583,7 @@ void Parser::execute_program() {
             if (next_input_index < (int)input_values.size())
                 mem[s->var_loc] = input_values[next_input_index++];
         } else if (s->kind == STMT_OUTPUT) {
-            cout << mem[s->var_loc] << " \n";
+            cout << mem[s->var_loc] << endl;
         } else if (s->kind == STMT_ASSIGN) {
             mem[s->var_loc] = eval_poly_eval(s->eval, mem);
         }
@@ -716,7 +721,7 @@ int Parser::degree_term_list(const TermList &tl) {
 void Parser::print_polynomial_degrees() {
     for (const PolyDecl &decl : poly_table) {
         int deg = degree_term_list(decl.body);
-        cout << decl.header.name.lexeme << ": " << deg << " \n";
+        cout << decl.header.name.lexeme << ": " << deg << endl;
     }
 }
 

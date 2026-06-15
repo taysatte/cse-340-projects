@@ -94,7 +94,7 @@ class Parser {
     Stmt *program;
     std::map<std::string, int> location_table;
     int next_location;
-    std::vector<int> mem;
+    std::vector<long long> mem;
     std::vector<int> input_values;
     int next_input_index;
 
@@ -140,14 +140,18 @@ class Parser {
     void parse_inputs_section();
     void parse_input_num_list();
 
-    int ipow(int base, int exp);
-    int eval_monomial(const Monomial &m, const std::vector<int> &arg_values);
-    int eval_term(const Term &term, const std::vector<int> &arg_values);
-    int eval_term_list(const TermList &tl, const std::vector<int> &arg_values);
-    int eval_poly_body(const TermList &body,
-                       const std::vector<int> &arg_values);
-    int eval_arg(const PolyEvalArg &arg, const std::vector<int> &mem);
-    int eval_poly_eval(PolyEval *pe, const std::vector<int> &mem);
+    long long ipow(long long base, int exp);
+    long long eval_monomial(const Monomial &m,
+                            const std::vector<long long> &arg_values);
+    long long eval_term(const Term &term,
+                        const std::vector<long long> &arg_values);
+    long long eval_term_list(const TermList &tl,
+                             const std::vector<long long> &arg_values);
+    long long eval_poly_body(const TermList &body,
+                             const std::vector<long long> &arg_values);
+    long long eval_arg(const PolyEvalArg &arg,
+                       const std::vector<long long> &mem);
+    long long eval_poly_eval(PolyEval *pe, const std::vector<long long> &mem);
     void execute_program();
     void run_execution();
 
